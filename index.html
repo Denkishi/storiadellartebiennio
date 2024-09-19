@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Accetto 18</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        body {
+            background-color: #2b2b2b;
+            color: white;
+            font-family: "Helvetica", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-height: 60vh;
+        }
+
+        #image-display {
+            background-color: #2b2b2b;
+            padding: 10px;
+            width: 100%;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .button {
+            background-color: #4d4d4d;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 30px 15px;
+            text-align: center;
+            text-decoration: none;
+            margin: 10px;
+            width: 100%;
+        }
+
+        #randomize-button {
+            background-color: #4d4d4d;
+        }
+
+        #reveal-button {
+            background-color: #4d4d4d;
+            display: none;
+        }
+
+        #instagram-button {
+            background-color: #4d4d4d;
+        }
+
+        #text-label {
+            margin-top: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 36px;
+        }
+
+        #image-label {
+            background-color: #2b2b2b;
+            padding: 10px;
+            margin-top: 10px;
+            white-space: pre-line;
+            overflow-wrap: break-word;
+            word-break: break-all;
+            width: 100%;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        #image {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+            margin: 0 auto;
+        }
+
+        @media only screen and (orientation: portrait) {
+            #image-display {
+                max-height: 60vh;
+            }
+            #image {
+                width: 100%;
+                max-height: 50vh;
+            }
+        }
+
+        @media only screen and (orientation: landscape) {
+            #image-display {
+                height: 100%;
+            }
+            #image {
+                max-width: 100%;
+                max-height: 100%;
+            }
+        }
+
+        @media only screen and (max-width: 480px) {
+            #image-display {
+                max-height: 50vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="image-display">
+            <img id="image" src="" alt="Random Image">
+        </div>
+        <div class="button-container">
+            <button id="randomize-button" class="button">Randomize Image</button>
+            <button id="reveal-button" class="button">Reveal</button>
+            <a id="instagram-button" class="button" href="https://www.instagram.com/dddenk_/" target="_blank">@denkishi_</a>
+        </div>
+        <div id="image-label"></div>
+    </div>
+
+    <script>
+        var imagePaths = [];
+
+        function censorFilePath(filePath) {
+            // Exclude the starting folder "Images"
+            filePath = filePath.replace("Images/", "");
+
+            // Format the file path with new lines after each directory
+            filePath = filePath.replace(/\\/g, "\\\n");
+
+            return filePath;
+        }
+
+        function getRandomImage() {
+            if (imagePaths.length > 0) {
+                var randomImagePath = imagePaths[Math.floor(Math.random() * imagePaths.length)];
+
+                // Update the label text and display the image
+                document.getElementById("image-label").innerText = "?";
+                document.getElementById("reveal-button").style.display = "inline-block";
+                document.getElementById("image").src = "";
+
+                // Load and display the image
+                document.getElementById("image").src = randomImagePath;
+
+                // Store the uncensored file path to be revealed later
+                document.getElementById("reveal-button").imagePath = randomImagePath;
+            } else {
+                // If no images found
+                document.getElementById("image-label").innerText = "No images found.";
+                document.getElementById("reveal-button").style.display = "none";
+            }
+        }
+
+        function revealFilePath() {
+            var imagePath = document.getElementById("reveal-button").imagePath;
+            var uncensoredPath = censorFilePath(imagePath);
+            document.getElementById("image-label").innerText = uncensoredPath;
+        }
+
+        document.getElementById("randomize-button").addEventListener("click", getRandomImage);
+        document.getElementById("reveal-button").addEventListener("click", revealFilePath);
+
+        // Load the image paths from the JSON file
+        fetch("image_paths.json")
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                imagePaths = data;
+            })
+            .catch(function (error) {
+                console.log("Error loading image paths:", error);
+            });
+    </script>
+</body>
+</html>
