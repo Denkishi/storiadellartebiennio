@@ -87,8 +87,6 @@
         }
 
         #image {
-            max-width: 100%;
-            max-height: 100%;
             display: block;
             margin: 0 auto;
         }
@@ -123,7 +121,8 @@
 <body>
     <div class="container">
         <div id="image-display">
-            <img id="image" src="" alt="Random Image">
+            <!-- Aggiungi width e height per limitare la dimensione a 1000x1000px -->
+            <img id="image" src="" alt="Random Image" width="1000" height="1000">
         </div>
         <div class="button-container">
             <button id="randomize-button" class="button">Randomize Image</button>
